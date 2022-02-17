@@ -7,8 +7,11 @@ let tokenUpComing = `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_K
 
 //DOM elements
 const movieList = document.querySelector('.append')
+const [topMovie,popular,upcoming] = document.querySelectorAll('.btns')
+console.log(topMovie);
 
 function renderMovie(data) {
+    movieList.innerHTML = ''
     for (const el of data) {
         let [movie,img,movieInfo,h3,rate,date] = createElements("div","img","div","h3","span","span")
 
@@ -29,6 +32,22 @@ function renderMovie(data) {
         movieList.append(movie)
     }
     
+}
+
+upcoming.onclick = async () => {
+    const response = await fetch(tokenUpComing)
+    const data = await response.json()
+    renderMovie(data.results)
+}
+popular.onclick = async () => {
+    const response = await fetch(tokenPopular)
+    const data = await response.json()
+    renderMovie(data.results)
+}
+topMovie.onclick = async () => {
+    const response = await fetch(tokenTop)
+    const data = await response.json()
+    renderMovie(data.results)
 }
 
 
