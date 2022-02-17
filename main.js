@@ -1,7 +1,4 @@
-// let API_KEY = 'b971c2f0de8767f08d2bb84160ba24b7'
-
 let page = 1
-
 // APIs
 let API_KEY = 'dcea1fd7b3e65d34387ad6de7ef9cc5e'
 let tokenTop = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&page=`
@@ -20,6 +17,7 @@ const search = document.querySelector('#search')
 const min = document.querySelector('#min')
 const max = document.querySelector('#max')
 const score = document.querySelector('#score')
+
 // render movie
 function renderMovie(data) {
     console.log(data);
@@ -72,14 +70,12 @@ upcoming.onclick = async () => {
 // pagination
 prev.onclick = async () => {
     if(page > 1) {
-        let active = window.localStorage.active
         page--
         pagNum.innerText = page
         renderMovie(await getData(getActiveUrl(page)))
     }
 }
 next.onclick = async () => {
-    let active = window.localStorage.active
     ++page
     pagNum.innerText = page
     renderMovie(await getData(getActiveUrl(page)))
@@ -96,8 +92,9 @@ async function filter(search,minDate,maxDate,score,data){
     renderMovie(filtered)
 }
 
+
+// Search button click
 searchBtn.addEventListener("click",async ()=> {
-    let active = window.localStorage.active
     let searchName = search.value ? search.value : ''
     let minScore = +min.value
     let maxScore = max.value ? +max.value : 3000
