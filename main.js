@@ -15,9 +15,14 @@ const [topMovie,popular,upcoming] = document.querySelectorAll('.btns')
 const prev = document.querySelector('.prev')
 const next = document.querySelector('.next')
 const pagNum = document.querySelector('.title')
-
+const searchBtn = document.querySelector('.btn')
+const search = document.querySelector('#search')
+const min = document.querySelector('#min')
+const max = document.querySelector('#max')
+const score = document.querySelector('#score')
 // render movie
 function renderMovie(data) {
+    console.log(data);
     movieList.innerHTML = ''
     for (const el of data) {
         let [movie,img,movieInfo,h3,rate,date] = createElements("div","img","div","h3","span","span")
@@ -70,31 +75,40 @@ prev.onclick = async () => {
         let active = window.localStorage.active
         page--
         pagNum.innerText = page
-        if (active === 'top') {
-            renderMovie(await getData(tokenTop+page))
-        } else if (active === 'popular') {
-            renderMovie(await getData(tokenPopular+page))
-        }
-        else if (active === 'upcoming') {
-            renderMovie(await getData(tokenUpComing+page))
-        }
+        renderMovie(await getData(getActiveUrl(page)))
     }
 }
 next.onclick = async () => {
     let active = window.localStorage.active
     ++page
     pagNum.innerText = page
-    if (active === 'top') {
-        renderMovie(await getData(tokenTop+page))
-    } else if (active === 'popular') {
-        renderMovie(await getData(tokenPopular+page))
-    }
-    else if (active === 'upcoming') {
-        renderMovie(await getData(tokenUpComing+page))
-    }
+    renderMovie(await getData(getActiveUrl(page)))
 }
-function filter(){}
 
+// filter button click
+async function filter(search,minDate,maxDate,score,data){
+    let filtered = data.filter(el => {
+        return el.title.toLowerCase().includes(search.toLowerCase()) &&
+        +el.release_date.match(/^\d+/g)[0] >= minDate && 
+        +el.release_date.match(/^\d+/g)[0] <= maxDate && 
+        el.vote_average >= score
+    })
+    renderMovie(filtered)
+}
+
+searchBtn.addEventListener("click",async ()=> {
+    let active = window.localStorage.active
+    let searchName = search.value ? search.value : ''
+    let minScore = +min.value
+    let maxScore = max.value ? +max.value : 3000
+    let scoreValue = score.value ? +score.value : 0
+    let data = await getData(getActiveUrl(page))
+    filter(searchName,minScore,maxScore,scoreValue, data)
+    search.value = ''
+    min.value = ''
+    max.value = ''
+    score.value = ''
+})
 
 // default active button
 switch (defaultActive) {
